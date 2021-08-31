@@ -6,24 +6,23 @@ import {
     Link
   } from "react-router-dom";
 import {AddUserPage, MainPage} from './';
+import './index.css'
 
 const RootRoute = () => {
     return (
+      <div className='main' >
         <Router>
-        <div>
+        <div className='router'>
           <nav>
             <ul>
               <li>
                 <Link to="/">Table</Link>
               </li>
               <li>
-                <Link to="/addUser">Users</Link>
+                <Link to="/addUser">Add User</Link>
               </li>
             </ul>
           </nav>
-  
-          {/* A <Switch> looks through its children <Route>s and
-              renders the first one that matches the current URL. */}
           <Switch>
             <Route path="/">
               <MainPage />
@@ -34,6 +33,7 @@ const RootRoute = () => {
           </Switch>
         </div>
       </Router>
+      </div>
     )
 }
 export default RootRoute
