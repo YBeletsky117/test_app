@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
 
 export type RootState = ReturnType<typeof rootReducer>
 
-const __DEV__ = true
+const __DEV__ = false
 
 const middlewares = [logger, thunkMiddleware],
       middlewareEnhancer = applyMiddleware(...middlewares),
