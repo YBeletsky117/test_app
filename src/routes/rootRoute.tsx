@@ -10,7 +10,6 @@ import {
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { getUsersAction } from '../store/users';
 import {AddUserPage, MainPage} from './';
-import { useRef } from 'react';
 
 const RootRoute = () => {
   const dispatch = useDispatch(),
@@ -18,21 +17,20 @@ const RootRoute = () => {
       {
         path: '/',
         label: 'Main',
-        Component: MainPage
+        component: MainPage
       },
       {
         path: '/addUser',
         label: 'Add User',
-        Component: AddUserPage
+        component: AddUserPage
       },
     ]
   useEffect(() => {
     dispatch(getUsersAction())
   }, [dispatch])
-  console.log(document.location.pathname)
   
   return (
-    <Router>
+    <Router basename='/test_app/'>
           <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
               <Navbar.Brand >APP</Navbar.Brand>
@@ -52,11 +50,11 @@ const RootRoute = () => {
             </Container>
           </Navbar>
           <Switch>
-            {links.map(({ path, Component }, key) => <Route {...{
+            {links.map(({ path, component }, key) => <Route {...{
               exact: true,
               key,
               path,
-              children: <Component />
+              component
             }} />)}
           </Switch>
       </Router>
