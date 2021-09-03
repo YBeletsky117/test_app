@@ -1,6 +1,5 @@
 import ACTION_TYPES from "./users.constants";
 import { getUsers } from "../../API";
-import { RootState } from "..";
 
 export const ACTIONS = {
     writeUsersToStore: (users) => ({
@@ -38,20 +37,17 @@ export const ACTIONS = {
             dispatch(ACTIONS.writeUsersToStore(users))
             dispatch(ACTIONS.stateLoadingUsers(true))
         }
-        catch (e) {
+        catch ({errorMessage}) {
             dispatch(ACTIONS.stateLoadingUsers(true))
-            return console.error(e);
+            return console.error(errorMessage);
         }
     },
     deleteUser: (id) => ({
         type: ACTION_TYPES.DELETE_USER,
         data: id
     }),
-    addUser: (userInfo) => (_, getState) => {
-        userInfo.id = +Date.now().toString() + getState().users.users.length
-        return {
-            type: ACTION_TYPES.ADD_USERS,
+    addUser: (userInfo) => ({
+            type: ACTION_TYPES.ADD_USER,
             data: userInfo
-        }
-    }
+    })
 }

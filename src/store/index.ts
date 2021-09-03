@@ -12,9 +12,13 @@ const rootReducer = combineReducers({
 
 export type RootState = ReturnType<typeof rootReducer>
 
+const __DEV__ = false
+
 const middlewares = [logger, thunkMiddleware],
       middlewareEnhancer = applyMiddleware(...middlewares),
       composedEnhancers = composeWithDevTools(middlewareEnhancer)
 
-export const store = createStore(rootReducer, composedEnhancers)
+export const store = __DEV__ ?
+  createStore(rootReducer, composedEnhancers) :
+  createStore(rootReducer, applyMiddleware(thunkMiddleware))
 

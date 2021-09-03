@@ -13,26 +13,28 @@ import {AddUserPage, MainPage} from './';
 import './index.css'
 
 const RootRoute = () => {
-  const [linkState, setLinkState] = useState(0),
+  const [linkState, setLinkState] = useState<String>(document.location.pathname),
   dispatch = useDispatch(),
     onClick = (event) => {
-      setLinkState(+event.target.id)
+      setLinkState(event.target.id)
     },
     links = [
       {
-        key: 1,
         path: '/main',
         label: 'Main',
         Component: MainPage
       },
       {
-        key: 2,
         path: '/addUser',
         label: 'Add User',
         Component: AddUserPage
       },
     ]
-  if (linkState === 0) dispatch(getUsersAction())
+    useEffect(() => {
+      dispatch(getUsersAction())
+  // eslint-disable-next-line
+  }, [])
+
   return (
     <div className='container-ext'>
       
@@ -54,15 +56,14 @@ const RootRoute = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                   {links.map((link, index) => (
-                    <li className="nav-item">
+                    <li className="nav-item" key={index}>
                       <Link
                         {...{
-                          className: `nav-link ${linkState === index && 'active'}`,
-                          id: index.toString(),
+                          className: `nav-link ${linkState === link.path && 'active'}`,
+                          id: link.path,
                           to: link.path,
                           children: link.label,
-                          onClick,
-                          key: link.key
+                          onClick
                         }} />
                     </li>
                   ))}
@@ -71,7 +72,7 @@ const RootRoute = () => {
         </div>
       </nav>
           <Switch>
-            {links.map(({ path, Component, key }) => <Route {...{
+            {links.map(({ path, Component }, key) => <Route {...{
               key,
               path,
               children: <Component/>

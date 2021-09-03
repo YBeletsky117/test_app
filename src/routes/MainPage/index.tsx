@@ -3,32 +3,30 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteUserAction, usersSelector } from '../../store/users'
 import { useEffect } from 'react'
-import getNameAndLast from '../../utils/additionalFunctions/getNameAndLast'
 import Loader from '../../components/Loader'
 import { store } from '../../store'
+import { debounce, getNameAndLast } from '../../utils/additionalFunctions'
 
 const MainPage = () => {
-  const [inputValue, setInputValue] = useState<String>(''),
+  const dispatch = useDispatch(),
     [usersList, setUsersList] = useState<USER_TYPES.Users['results']>(store.getState().users.users!),
-    dispatch = useDispatch(),
       
-    searchDebounce = debounce(function () {
-      const searchRequest = getNameAndLast(inputValue)
-      setUsersList(searchRequest.length !== 0 ? usersListFromStore!.filter(({ firstName, lastName }) =>
+    onSearchDebounce = debounce(function ({ target: { value } }) {
+      const searchRequest = getNameAndLast(value, 2)
+      setUsersList(value.length !== 0 ? usersListFromStore!.filter(({ firstName, lastName }) =>
           firstName.includes(searchRequest[0]) ||
           firstName.includes(searchRequest[1]) ||
           lastName.includes(searchRequest[0]) ||
           lastName.includes(searchRequest[1])
       ): usersListFromStore!)
-    }, 600),
-
-    onSearch = ({ target: { value } }) => {
-      setInputValue(value)
-    },
+    }, 1000),
 
     onDelete = (val) => dispatch(deleteUserAction(+val.target.id)),
 
-    onReset = () => setInputValue(''),
+    onReset = () => {
+      (document.getElementById('search') as HTMLInputElement).value = ''
+      setUsersList(usersListFromStore!)
+    },
 
     headerTable = [
       '№',
@@ -45,37 +43,23 @@ const MainPage = () => {
   
   useEffect(() => {
     setUsersList(usersListFromStore!)
-  }, [isLoaded])
+  }, [usersListFromStore])
 
-  useEffect(() => {
-    searchDebounce()
-  }, [inputValue])
-
-
-  function debounce (func: Function, delay: number) {
-    let timer
-    return () => {
-        function funcApply (this: any) {
-            func.apply(this, arguments)
-        }
-        clearTimeout(timer)
-        timer = setTimeout(funcApply, delay)
-    }
-}
     return (
         <div className='container' >
               <div className="d-flex p-4">
                   <input
                     className="form-control me-3"
-                    id="search"
+            id="search"
+            itemID='search'
                     type="search"
                     aria-label="Search"
-                    onChange={onSearch}
+                    onChange={onSearchDebounce}
                   />
                   <button
                     className="btn btn-outline-secondary"
-                    type="reset"
-                    onClick={onReset}
+            type="reset"
+            onClick = {onReset}
                   >
                     Reset
                   </button>
@@ -89,31 +73,37 @@ const MainPage = () => {
             </tr>
           </thead>
           <tbody>
-            {usersList!.map((user, index) => (
-              <tr key={index}>
-                <th scope="row">{index++}</th>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>
-                  <img
-                    className='user-icon'
-                    src={user.icon}
-                    alt={`Icon by ${user.firstName} ${user.lastName}`}
-                  />
-                </td>
-                <td>{`${user.location.country}, ${user.location.city}`}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.registered}</td>
-                <td>
-                  <button
-                    id={user.id.toString()}
-                    onClick={onDelete}
-                    type="button"
-                    className="btn btn-outline-danger">&#65794;</button>
-                </td>
-              </tr>
-            ))}
+                {usersList!.map((user, index) => (
+                  <tr key={index}>
+                    <th scope="row">{index++}</th>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                      <td>
+                        {user.icon ? <img
+                        className='user-icon'
+                        src={user?.icon}
+                        alt={`Icon by ${user.firstName} ${user.lastName}`}
+                      /> : <p>No icon</p>}
+                      
+                      </td><td>
+                        {user.location ?
+                          <p>{user.location.country ?? null}
+                            {user.location.city && user.location.country && `, `}
+                          {user.location.city ?? null }</p>
+                          : null}
+                    </td>
+                    <td>{user?.email}</td>
+                    <td>{user?.phone}</td>
+                    <td>{user.registered}</td>
+                    <td>
+                      <button
+                        id={user.id.toString()}
+                        onClick={onDelete}
+                        type="button"
+                        className="btn btn-outline-danger">&#65794;</button>
+                    </td>
+                  </tr>
+                ))}
           </tbody>
         </table> : <div className='center'><Loader/></div>}
           

@@ -1,72 +1,70 @@
+import { useEffect } from 'react'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addUserAction, usersSelector } from '../../store/users'
 import './index.css'
 
 const AddUserPage = () => {
+    const [userInfo, setUserInfo] = useState<any>({}),
+        dispatch = useDispatch(),
+        {users} = useSelector(usersSelector),
+        onChange = ({ target: { id, value } }) => {
+            if (id.includes('location')) {
+                id = id.substring(9, 20).trim()
+                setUserInfo({ ...userInfo, location: {...userInfo.location, [id]: value} })
+            } else {
+                setUserInfo({ ...userInfo, [id]: value })
+            }
+        }
+       function onSubmit (event) {
+           event.preventDefault();
+           dispatch(addUserAction(userInfo))
+       }
+    useEffect(() => {
+        setUserInfo({
+            ...userInfo,
+            registered: new Date().toLocaleDateString(),
+            id: +Date.now().toString() + users!.length
+        })
+       // eslint-disable-next-line
+    }, [])
     return (
-        <div>
-            <form className="row g-3 needs-validation">
-  <div className="col-md-4">
-    <label htmlFor="validationCustom01" className="form-label">First name</label>
-    <input type="text" className="form-control" id="validationCustom01" required/>
-    <div className="valid-feedback">
-      Looks good!
-    </div>
-  </div>
-  <div className="col-md-4">
-    <label htmlFor="validationCustom02" className="form-label">Last name</label>
-    <input type="text" className="form-control" id="validationCustom02" required/>
-    <div className="valid-feedback">
-      Looks good!
-    </div>
-  </div>
-  <div className="col-md-4">
-    <label htmlFor="validationCustomUsername" className="form-label">Username</label>
-    <div className="input-group has-validation">
-      <span className="input-group-text" id="inputGroupPrepend">@</span>
-      <input type="text" className="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required/>
-      <div className="invalid-feedback">
-        Please choose a username.
-      </div>
-    </div>
-  </div>
-  <div className="col-md-6">
-    <label htmlFor="validationCustom03" className="form-label">City</label>
-    <input type="text" className="form-control" id="validationCustom03" required/>
-    <div className="invalid-feedback">
-      Please provide a valid city.
-    </div>
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="validationCustom04" className="form-label">State</label>
-    <select className="form-select" id="validationCustom04" required>
-      <option selected disabled value="">Choose...</option>
-      <option>...</option>
-    </select>
-    <div className="invalid-feedback">
-      Please select a valid state.
-    </div>
-  </div>
-  <div className="col-md-3">
-    <label htmlFor="validationCustom05" className="form-label">Zip</label>
-    <input type="text" className="form-control" id="validationCustom05" required/>
-    <div className="invalid-feedback">
-      Please provide a valid zip.
-    </div>
-  </div>
-  <div className="col-12">
-    <div className="form-check">
-      <input className="form-check-input" type="checkbox" value="" id="invalidCheck" required/>
-      <label className="form-check-label" htmlFor="invalidCheck">
-        Agree to terms and conditions
-      </label>
-      <div className="invalid-feedback">
-        You must agree before submitting.
-      </div>
-    </div>
-  </div>
-  <div className="col-12">
-    <button className="btn btn-primary" type="submit">Submit form</button>
-  </div>
-</form>
+        <div className='p-5'>
+            <form className="row g-3 needs-validation" onSubmit={onSubmit}>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustom01" className="form-label">First name</label>
+                    <input type="text" className="form-control" id="firstName" {...{onChange}} required/>
+                    <div className="valid-feedback"></div>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustom02" className="form-label">Last name</label>
+                    <input type="text" className="form-control" id="lastName" {...{onChange}} required/>
+                    <div className="valid-feedback"></div>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustomUsername" className="form-label">Location (Country)</label>
+                    <input type="text" className="form-control" id="location-country" {...{onChange}}/>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustomUsername" className="form-label">Location (City)</label>
+                    <input type="text" className="form-control" id="location-city" {...{onChange}}/>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustom03" className="form-label">Phone</label>
+                    <input inputMode='tel' type="tel" className="form-control" id="phone" {...{onChange}}/>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustom03" className="form-label">E-Mail</label>
+                    <input type="email" className="form-control" id="email" {...{onChange}}/>
+                </div>
+                <div className="col-md-3">
+                    <label htmlFor="validationCustom05" className="form-label">Picture link</label>
+                    <input type="text" className="form-control" id="icon" {...{onChange}}/>
+                </div>
+                <div className="col-12">
+                    <button className="btn btn-outline-primary" onSubmit={onSubmit} type='submit'>Add User</button>
+                </div>
+            </form>
         </div>
     )
 }

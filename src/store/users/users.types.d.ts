@@ -39,14 +39,14 @@ declare namespace USER_TYPES {
     export type UserInfo = {
         firstName: String,
         lastName: String,
-        location: {
-            country: String,
-            city: String
+        location?: {
+            country?: String,
+            city?: String
         },
-        email: String,
-        phone: String,
+        email?: String,
+        phone?: String,
         registered: string,
-        icon: string,
+        icon?: string,
         id: number
     }
 

@@ -14,9 +14,9 @@ const handleReducers = {
                 ...state,
                 users
         }),
-    [ACTION_TYPES.ADD_USERS]: (state: USER_TYPES.State, UserInfo: USER_TYPES.UserInfo) => ({
+    [ACTION_TYPES.ADD_USER]: (state: USER_TYPES.State, UserInfo: USER_TYPES.UserInfo) => ({
         ...state,
-        users: state.users?.push(UserInfo)
+        users: state.users?.concat([UserInfo])
     }),
     [ACTION_TYPES.DELETE_USER]: (state: USER_TYPES.State, id: number) => ({
         ...state,
