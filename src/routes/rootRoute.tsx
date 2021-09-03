@@ -6,13 +6,14 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
-  } from "react-router-dom";
+    Link,
+    Redirect
+} from "react-router-dom";
 import { getUsersAction } from '../store/users';
 import {AddUserPage, MainPage} from './';
 import './index.css'
 
-const RootRoute = () => {
+const RootRoute = (props) => {
   const [linkState, setLinkState] = useState<String>(document.location.pathname),
   dispatch = useDispatch(),
     onClick = (event) => {
@@ -33,12 +34,13 @@ const RootRoute = () => {
     useEffect(() => {
       dispatch(getUsersAction())
   // eslint-disable-next-line
-  }, [])
-
+    }, [])
+  
   return (
     <div className='container-ext'>
       
-        <Router>
+      <Router>
+        {document.location.pathname === '/' && <Redirect from='/' to='/main' />}
         <div className='router'>
         <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-xxl">
