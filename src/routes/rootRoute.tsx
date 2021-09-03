@@ -6,14 +6,13 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link,
-    Redirect
+    Link
 } from "react-router-dom";
 import { getUsersAction } from '../store/users';
 import {AddUserPage, MainPage} from './';
 import './index.css'
 
-const RootRoute = (props) => {
+const RootRoute = () => {
   const [linkState, setLinkState] = useState<String>(document.location.pathname),
   dispatch = useDispatch(),
     onClick = (event) => {
@@ -40,7 +39,6 @@ const RootRoute = (props) => {
     <div className='container-ext'>
       
       <Router>
-        {document.location.pathname === '/' && <Redirect from='/' to='/main' />}
         <div className='router'>
         <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-xxl">
@@ -48,6 +46,7 @@ const RootRoute = (props) => {
               <button
                 className="navbar-toggler"
                 type="button"
+                disabled
                 data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent"
