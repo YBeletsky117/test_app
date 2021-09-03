@@ -1,11 +1,12 @@
+import './index.css'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addUserAction, usersSelector } from '../../store/users'
-import './index.css'
 
 const AddUserPage = () => {
     const [userInfo, setUserInfo] = useState<any>({}),
+        [stateRequest, setStateRequest] = useState<String>('def'),
         dispatch = useDispatch(),
         {users} = useSelector(usersSelector),
         onChange = ({ target: { id, value } }) => {
@@ -16,9 +17,18 @@ const AddUserPage = () => {
                 setUserInfo({ ...userInfo, [id]: value })
             }
         }
-       function onSubmit (event) {
-           event.preventDefault();
-           dispatch(addUserAction(userInfo))
+    function onSubmit(event) {
+        event.preventDefault();
+        try {
+            dispatch(addUserAction(userInfo))
+            setStateRequest('good')
+            return setTimeout(() => {
+                setStateRequest('def')
+            }, 2000)
+        } catch {
+            setStateRequest('err')
+            return setTimeout(() => setStateRequest('def'), 2000)
+           }
        }
     useEffect(() => {
         setUserInfo({
@@ -62,7 +72,7 @@ const AddUserPage = () => {
                     <input type="text" className="form-control" id="icon" {...{onChange}}/>
                 </div>
                 <div className="col-12">
-                    <button className="btn btn-outline-primary" onSubmit={onSubmit} type='submit'>Add User</button>
+                    <button className={`btn btn-${stateRequest === 'good' ? 'success' : stateRequest === 'err' ? 'danger' :'primary'}`} onSubmit={onSubmit} type='submit'>Add User</button>
                 </div>
             </form>
         </div>

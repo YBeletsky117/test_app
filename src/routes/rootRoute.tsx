@@ -1,26 +1,22 @@
 import React from 'react'
 import { useEffect } from 'react';
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
-    Link
+  Route,
+  Link,
 } from "react-router-dom";
+import { Navbar, Container, Nav } from 'react-bootstrap';
 import { getUsersAction } from '../store/users';
 import {AddUserPage, MainPage} from './';
-import './index.css'
+import { useRef } from 'react';
 
 const RootRoute = () => {
-  const [linkState, setLinkState] = useState<String>(document.location.pathname),
-  dispatch = useDispatch(),
-    onClick = (event) => {
-      setLinkState(event.target.id)
-    },
+  const dispatch = useDispatch(),
     links = [
       {
-        path: '/main',
+        path: '/',
         label: 'Main',
         Component: MainPage
       },
@@ -30,46 +26,40 @@ const RootRoute = () => {
         Component: AddUserPage
       },
     ]
-    useEffect(() => {
-      dispatch(getUsersAction())
-  // eslint-disable-next-line
-    }, [])
+  useEffect(() => {
+    dispatch(getUsersAction())
+  }, [dispatch])
+  console.log(document.location.pathname)
   
   return (
-    <div className='container-ext'>
-      
-      <Router>
-        <div className='router'>
-        <nav className="navbar navbar-expand-lg navbar-light">
-        <div className="container-xxl">
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                  {links.map((link, index) => (
-                    <li className="nav-item" key={index}>
-                      <Link
-                        {...{
-                          className: `nav-link ${linkState === link.path && 'active'}`,
-                          id: link.path,
-                          to: link.path,
-                          children: link.label,
-                          onClick
-                        }} />
-                    </li>
-                  ))}
-            </ul>
-          </div>
-        </div>
-      </nav>
+    <Router>
+          <Navbar bg="dark" variant="dark" expand="lg">
+            <Container>
+              <Navbar.Brand >APP</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                  {links.map((link, index) => <Link
+                    {...{
+                      key: index.toString(),
+                      className: `nav-link`,
+                      id: link.path,
+                      to: link.path,
+                      children: link.label
+                    }} />)}
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
           <Switch>
             {links.map(({ path, Component }, key) => <Route {...{
+              exact: true,
               key,
               path,
-              children: <Component/>
+              children: <Component />
             }} />)}
           </Switch>
-        </div>
       </Router>
-    </div>
     )
 }
 export default RootRoute

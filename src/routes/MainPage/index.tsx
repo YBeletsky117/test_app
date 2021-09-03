@@ -1,11 +1,12 @@
 import './index.css'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteUserAction, usersSelector } from '../../store/users'
+import { deleteUserAction, getUsersAction, usersSelector } from '../../store/users'
 import { useEffect } from 'react'
 import Loader from '../../components/Loader'
 import { store } from '../../store'
 import { debounce, getNameAndLast } from '../../utils/additionalFunctions'
+import {Table} from 'react-bootstrap'
 
 const MainPage = () => {
   const dispatch = useDispatch(),
@@ -45,6 +46,10 @@ const MainPage = () => {
     setUsersList(usersListFromStore!)
   }, [usersListFromStore])
 
+  useEffect(() => {
+    if (usersListFromStore?.length === 0) dispatch(getUsersAction())
+  // eslint-disable-next-line
+    }, [])
     return (
         <div className='container' >
               <div className="d-flex p-4">
@@ -66,7 +71,7 @@ const MainPage = () => {
         </div>
         <div className='content' >
           {isLoaded ? usersList!.length === 0 ? <h5 className='text-center pt-4' >No data available</h5> :
-            <table className="table table-striped">
+            <Table striped bordered hover variant="dark">
           <thead>
             <tr>
               {headerTable.map((label, index) => <th scope="col" key={index} >{label}</th>)}
@@ -105,7 +110,7 @@ const MainPage = () => {
                   </tr>
                 ))}
           </tbody>
-        </table> : <div className='center'><Loader/></div>}
+        </Table> : <div className='center'><Loader/></div>}
           
         </div>
                 
